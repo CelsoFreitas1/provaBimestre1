@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="ISO-8859-1">
+ <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+<title>Usuário</title>
+</head>
+<body>
+	
+	<h3>Manutenção de Usuário</h3>
+	<form action="" id="formCadastroUsuario">
+		<div class="mb-3">
+			<label for="id" class="form-label">ID</label> 
+			<input type="text" id="id" readonly="readonly">			
+		</div>
+		<div class="mb-3">
+			<label for="nome" class="form-label">Nome do Usuário</label> 
+			<input type="text" id="nome" placeholder="Informe o nome" required="required">			
+		</div>
+		<div class="mb-3">
+			<label for="idade" class="form-label">Idade do Usuário</label> 
+			<input type="number" id="idade" placeholder="Informe a idade" required="required">			
+		</div>
+	</form>
+	
+	<button type="button" class="btn btn-primary" onclick="salvarUsuario()">Salvar</button>
+	<button type="button" class="btn btn-primary" onclick="document.getElementById('formCadastroUsuario').reset();">Novo</button>
+	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPesquisarUsuario">Pesquisar</button>
+
+	<div class="modal fade" id="modalPesquisarUsuario" tabindex="-1"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalPesquisarUsuario">Pesquisar Usuário</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="mb-3">
+							<label for="nameBusca" class="form-label">Informe o nome:</label> 
+							<input type="text" id="nameBusca">			
+						</div>
+						<button type="button" class="btn btn-success" onclick="pesquisarUsuario()">Buscar</button>				
+					</form>
+
+					<table class="table" id="tabelaresultados">
+						<thead>
+							<tr>
+								<th scope="col">ID</th>
+								<th scope="col">Nome</th>
+								<th scope="col">Editar</th>
+								<th scope="col">Deletar</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">Fechar</button>					
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Jquery - instalação -->
+		<script src="https://code.jquery.com/jquery-3.7.0.min.js"
+			integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+			crossorigin="anonymous"></script>
+		<!-- Option 1: Bootstrap Bundle with Popper -->
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+			crossorigin="anonymous"></script>
+
+		<script type="text/javascript">
+	
+		function salvarUsuario() {
+			
+			var id = $("#id").val();
+			var nome = $("#nome").val();
+			var idade = $("#idade").val();
+			
+			//alert(nome);
+			
+			$.ajax({
+				method : "POST",
+				url : "usuario",
+				data : JSON.stringify({
+					id : id,
+					nome : nome,
+					idade : idade
+				}),
+				contentType : "application/json; charset=utf-8",
+				success : function(response) {
+					$("#id").val(response.id);
+					alert("Gravou com sucesso!");
+				}
+			}).fail(function(xhr, status, errorThrown) {
+				alert("Erro ao salvar usuario: " + xhr.responseText);
+			});		
+			
+		}
+		
+		function pesquisarUsuario() {
+			
+			var nome = $("#nameBusca").val();
+		
+			 $.ajax({
+					method : "GET",
+					url : "usuario/buscarpornome",
+					data : "name=" + nome ,
+					success : function(response) {
+						$('#tabelaresultados > tbody > tr').remove();
+						
+						for (var i = 0; i < response.length; i++){
+							$('#tabelaresultados > tbody').append('<tr id="'+response[i].id+'"><td>'+response[i].id+'</td><td>'+response[i].nome+'</td><td><button type="button" onclick="colocarEmEdicao('+response[i].id+')" class="btn btn-primary">Ver</button></td><td><button type="button" class="btn btn-danger" onclick="deleteUser('+response[i].id+')">Delete</button></td></tr>');
+						}
+					  
+					}
+				}).fail(function(xhr, status, errorThrown) {
+					alert("Erro ao buscar usuario: " + xhr.responseText);
+				});
+		}
+		
+		function colocarEmEdicao(id) {
+			 $.ajax({
+					method : "GET",
+					url : "usuario/buscarporid",
+					data : "iduser=" + id ,
+					success : function(response) {
+						$("#id").val(response.id);
+						$("#nome").val(response.nome);
+						$("#idade").val(response.idade);
+					}
+			 }).fail(function(xhr, status, errorThrown) {
+					alert("Erro ao buscar usuario por ID: " + xhr.responseText);
+			});
+		}
+	
+	</script>
+</body>
+</html>
+
+
+
+
+
+

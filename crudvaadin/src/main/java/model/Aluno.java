@@ -3,27 +3,28 @@ package model;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @EntityScan
 @Table(name="UserTable")
-public class Usuario {
+public class Aluno {
 	
-	@iD
+	@Id
 	@GeneratedValue
 	private Long id;
 	private String nome;
 	private String sobrenome;
-	private String email;
+	private String idade;
 	
-	protected Usuario() {}
+	protected Aluno() {}
 	
-	public Usuario(Long id, String nome, String sobrenome, String email) {
+	public Aluno(Long id, String nome, String sobrenome, String idade) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.sobrenome = sobrenome;
-		this.email = email;
+		this.idade = idade;
 	}
 
 	public Long getId() {
@@ -50,12 +51,12 @@ public class Usuario {
 		this.sobrenome = sobrenome;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getIdade() {
+		return idade;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setEmail(String idade) {
+		this.idade = idade;
 	}
 	
 	
